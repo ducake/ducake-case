@@ -11,7 +11,7 @@
       <img alt="JDK" src="https://img.shields.io/badge/JDK-1.8+-green.svg"/>
   </a>
   <a href="https://www.jetbrains.com">
-      <img src="https://img.shields.io/badge/IntelliJ IDEA-support-green.svg" >
+      <img src="https://img.shields.io/badge/IntelliJ IDEA-support-blue.svg" >
   </a>
   <a href="https://github.com/ducake/ducake-case/blob/master/LICENSE">
       <img alt="LICENSE" src="https://img.shields.io/github/license/ducake/ducake-case.svg"/>
