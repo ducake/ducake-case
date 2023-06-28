@@ -11,4 +11,9 @@
 
     <artifactId>ducake-console</artifactId>
 
+
+    <dependencies>
+
+    </dependencies>
+
 </project>

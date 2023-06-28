@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ducake-demo</artifactId>
+    <artifactId>ducake-admin</artifactId>
+
 
 </project>

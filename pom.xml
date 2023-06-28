@@ -18,7 +18,7 @@
     <modules>
         <module>ducake-common</module>
         <module>ducake-console</module>
-        <module>ducake-demo</module>
+        <module>ducake-admin</module>
     </modules>
 
 
@@ -26,6 +26,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <lombok.version>1.18.26</lombok.version>
         <druid.version>1.2.16</druid.version>
         <spring.cloud.version>2021.0.6</spring.cloud.version>
@@ -40,8 +41,15 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <!--配置类生成元数据信息 | 编译阶段-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
