@@ -45,6 +45,13 @@ public class ExpressionEvaluator<T> extends CachedExpressionEvaluator {
      */
     private Method getTargetMethod(Class<?> targetClass, Method method) {
         AnnotatedElementKey methodKey = new AnnotatedElementKey(method, targetClass);
+
+        /**
+         * 根据sonar建议可优化为：
+         * return this.targetMethodCache.computeIfAbsent(methodKey, k -> AopUtils.getMostSpecificMethod(method, targetClass));
+         * 但是我就不
+         */
+
         Method targetMethod = this.targetMethodCache.get(methodKey);
         if (targetMethod == null) {
             targetMethod = AopUtils.getMostSpecificMethod(method, targetClass);
