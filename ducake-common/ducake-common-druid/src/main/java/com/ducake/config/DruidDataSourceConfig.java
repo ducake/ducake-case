@@ -24,8 +24,8 @@ public class DruidDataSourceConfig {
     @Bean
     public DynamicRoutingDataSource dynamicDataSource() {
         DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
-        DataSourceContextHolder.DATASOURCES_MAP.putAll(getDynamicDataSource());
-        dynamicDataSource.setTargetDataSources(DataSourceContextHolder.DATASOURCES_MAP);
+        DataSourceContextHolder.setDatasourceMap(getDynamicDataSource());
+        dynamicDataSource.setTargetDataSources(DataSourceContextHolder.getDatasourceMap());
 
         // 不设置默认数据源，默认使用default数据源
 

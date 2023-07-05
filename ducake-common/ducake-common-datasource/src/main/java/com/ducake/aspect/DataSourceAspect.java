@@ -6,14 +6,14 @@ import com.ducake.tools.expression.ExpressionEvaluator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.expression.AnnotatedElementKey;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 
@@ -28,11 +28,20 @@ public class DataSourceAspect {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private static final String DYNAMIC_PREFIX = "#";
 
-    @Around("@annotation(targetDataSource)")
-    public Object around(ProceedingJoinPoint point, DataSource targetDataSource) throws Throwable {
+    @Pointcut("@annotation(com.ducake.annotation.DataSource) " +
+            "|| @within(com.ducake.annotation.DataSource)")
+    public void dataSourcePointCut() {
+
+    }
+
+    @Around("dataSourcePointCut()")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
         MethodSignature signature = (MethodSignature) point.getSignature();
         Class<?> targetClass = point.getTarget().getClass();
         Method method = signature.getMethod();
+
+        DataSource targetDataSource = ObjectUtils.isEmpty(method.getAnnotation(DataSource.class))
+                ? targetClass.getAnnotation(DataSource.class) : method.getAnnotation(DataSource.class);
 
         // SpEL表达式的方式读取对应参数值
         EvaluationContext evaluationContext = evaluator.createEvaluationContext(point.getTarget(), targetClass, method, point.getArgs());
@@ -44,14 +53,19 @@ public class DataSourceAspect {
             dataSourceName = evaluator.getValueByConditionExpression(dataSourceName, methodKey, evaluationContext, String.class);
         }
 
-        DataSourceContextHolder.setDataSource(dataSourceName);
-        logger.debug("set datasource is {}", dataSourceName);
+        if (DataSourceContextHolder.getDatasourceMap().containsKey(dataSourceName)) {
+            DataSourceContextHolder.setDataSource(dataSourceName);
+            logger.info("set datasource is {}", dataSourceName);
+        } else {
+            logger.info("failed to set the datasource because the datasource {} does not exist", dataSourceName);
+        }
+
 
         try {
             return point.proceed();
         } finally {
             DataSourceContextHolder.removeDataSource();
-            logger.debug("clean datasource");
+            logger.info("clean datasource");
         }
     }
 }

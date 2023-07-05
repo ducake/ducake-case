@@ -30,8 +30,15 @@ public class DataSourceContextHolder {
         }
     };
 
-    public static Map<Object, Object> DATASOURCES_MAP = new ConcurrentHashMap<>(10);
+    private static Map<Object, Object> datasourceMap = new ConcurrentHashMap<>(10);
 
+    public static Map<Object, Object> getDatasourceMap() {
+        return DataSourceContextHolder.datasourceMap;
+    }
+
+    public static void setDatasourceMap(Map<Object, Object> datasourceMap) {
+        DataSourceContextHolder.datasourceMap = datasourceMap;
+    }
     /**
      * 获得当前线程数据源
      *
