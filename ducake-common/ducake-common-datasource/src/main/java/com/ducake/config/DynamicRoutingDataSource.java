@@ -16,6 +16,7 @@ public class DynamicRoutingDataSource extends AbstractRoutingDataSource {
 
     /**
      * 运行时动态添加、删除新数据源
+     * TODO：将配置文件数据源与后添加数据源区分，配置文件中数据源不可删除
      * @return
      */
     @Override
