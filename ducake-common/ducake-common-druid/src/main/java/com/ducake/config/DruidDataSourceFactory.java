@@ -10,6 +10,10 @@ import java.sql.SQLException;
  */
 public class DruidDataSourceFactory {
 
+    private DruidDataSourceFactory(){
+        throw new IllegalStateException("DruidDataSourceFactory class");
+    }
+
     public static DruidDataSource buildDruidDataSource(DataSourceProperties properties) {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(properties.getDriverClassName());

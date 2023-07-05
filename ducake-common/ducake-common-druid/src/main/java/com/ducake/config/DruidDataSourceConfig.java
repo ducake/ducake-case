@@ -21,34 +21,13 @@ public class DruidDataSourceConfig {
     @Resource
     private DruidDataSourceProperties properties;
 
-/*    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.druid")
-    public DataSourceProperties dataSourceProperties() {
-        return new DataSourceProperties();
-    }*/
-
-/*    @Bean
-    public DynamicRoutingDataSource dynamicDataSource(DataSourceProperties dataSourceProperties) {
-        DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
-        DataSourceContextHolder.dataSourcesMap.putAll(getDynamicDataSource());
-        dynamicDataSource.setTargetDataSources(DataSourceContextHolder.dataSourcesMap);
-
-        //默认数据源
-        DruidDataSource defaultDataSource = DruidDataSourceFactory.buildDruidDataSource(dataSourceProperties);
-        dynamicDataSource.setDefaultTargetDataSource(defaultDataSource);
-
-        return dynamicDataSource;
-    }*/
-
     @Bean
     public DynamicRoutingDataSource dynamicDataSource() {
         DynamicRoutingDataSource dynamicDataSource = new DynamicRoutingDataSource();
         DataSourceContextHolder.DATASOURCES_MAP.putAll(getDynamicDataSource());
         dynamicDataSource.setTargetDataSources(DataSourceContextHolder.DATASOURCES_MAP);
 
-        //默认数据源
-/*        DruidDataSource defaultDataSource = DruidDataSourceFactory.buildDruidDataSource(dataSourceProperties);
-        dynamicDataSource.setDefaultTargetDataSource(defaultDataSource);*/
+        // 不设置默认数据源，默认使用default数据源
 
         return dynamicDataSource;
     }

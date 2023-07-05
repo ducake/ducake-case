@@ -13,13 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataSourceContextHolder {
 
+    private DataSourceContextHolder() {
+        throw new IllegalStateException("DataSourceContextHolder class");
+    }
+
     /**
      * 为什么要用链表存储(准确的是栈)
-     * <pre>
      * 为了支持嵌套切换，如ABC三个service都是不同的数据源
      * 其中A的某个业务要调B的方法，B的方法需要调用C的方法。一级一级调用切换，形成了链。
      * 传统的只设置当前线程的方式不能满足此业务需求，必须使用栈，后进先出。
-     * </pre>
      */
     private static final ThreadLocal<Deque<String>> LOOKUP_KEY_HOLDER = new NamedThreadLocal<Deque<String>>("dynamic-datasource") {
         @Override
@@ -46,10 +48,10 @@ public class DataSourceContextHolder {
      * 如非必要不要手动调用，调用后确保最终清除
      * </p>
      *
-     * @param dataSource 数据源名称
+     * @param dataSourceName 数据源名称
      */
-    public static void setDataSource(String dataSource) {
-        LOOKUP_KEY_HOLDER.get().push(dataSource);
+    public static void setDataSource(String dataSourceName) {
+        LOOKUP_KEY_HOLDER.get().push(dataSourceName);
     }
 
 

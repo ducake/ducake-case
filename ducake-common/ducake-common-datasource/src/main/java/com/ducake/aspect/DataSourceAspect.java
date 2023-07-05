@@ -2,23 +2,18 @@ package com.ducake.aspect;
 
 import com.ducake.annotation.DataSource;
 import com.ducake.config.DataSourceContextHolder;
-import org.aspectj.lang.JoinPoint;
+import com.ducake.tools.expression.ExpressionEvaluator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.EvaluationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 
@@ -28,42 +23,29 @@ import java.lang.reflect.Method;
  */
 @Aspect
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class DataSourceAspect {
+    private ExpressionEvaluator<String> evaluator = new ExpressionEvaluator<>();
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private static final String DYNAMIC_PREFIX = "#";
 
-    @Pointcut("@annotation(com.ducake.annotation.DataSource) " +
-            "|| @within(com.ducake.annotation.DataSource)")
-    public void dataSourcePointCut() {
-
-    }
-
-    @Around("dataSourcePointCut()")
-    public Object around(ProceedingJoinPoint point) throws Throwable {
-        //通过SpEL获取接口参数对象属性值
-        StandardEvaluationContext standardEvaluationContext = new StandardEvaluationContext(point.getArgs());
-        standardEvaluationContext = setContextVariables(standardEvaluationContext, point);
-
+    @Around("@annotation(targetDataSource)")
+    public Object around(ProceedingJoinPoint point, DataSource targetDataSource) throws Throwable {
         MethodSignature signature = (MethodSignature) point.getSignature();
-        Class targetClass = point.getTarget().getClass();
+        Class<?> targetClass = point.getTarget().getClass();
         Method method = signature.getMethod();
 
-        DataSource targetDataSource = (DataSource) targetClass.getAnnotation(DataSource.class);
-        DataSource methodDataSource = method.getAnnotation(DataSource.class);
+        // SpEL表达式的方式读取对应参数值
+        EvaluationContext evaluationContext = evaluator.createEvaluationContext(point.getTarget(), targetClass, method, point.getArgs());
+        AnnotatedElementKey methodKey = new AnnotatedElementKey(method, targetClass);
 
-        String value = "default";
-        if (methodDataSource != null) {
-            value = methodDataSource.value();
-        } else if (targetDataSource != null) {
-            value = targetDataSource.value();
-        }
-        if (value.startsWith(DYNAMIC_PREFIX)) {
-            value = getElValue(value, standardEvaluationContext);
+        String dataSourceName = targetDataSource.value();
+
+        if (dataSourceName.startsWith(DYNAMIC_PREFIX)) {
+            dataSourceName = evaluator.getValueByConditionExpression(dataSourceName, methodKey, evaluationContext, String.class);
         }
 
-        DataSourceContextHolder.setDataSource(value);
-        logger.debug("set datasource is {}", value);
+        DataSourceContextHolder.setDataSource(dataSourceName);
+        logger.debug("set datasource is {}", dataSourceName);
 
         try {
             return point.proceed();
@@ -72,37 +54,4 @@ public class DataSourceAspect {
             logger.debug("clean datasource");
         }
     }
-
-    private StandardEvaluationContext setContextVariables(StandardEvaluationContext standardEvaluationContext,
-                                                          JoinPoint joinPoint) {
-
-        Object[] args = joinPoint.getArgs();
-        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Method targetMethod = methodSignature.getMethod();
-        LocalVariableTableParameterNameDiscoverer parameterNameDiscoverer
-                = new LocalVariableTableParameterNameDiscoverer();
-        String[] parametersName = parameterNameDiscoverer.getParameterNames(targetMethod);
-
-        if (args == null || args.length <= 0) {
-            return standardEvaluationContext;
-        }
-        for (int i = 0; i < args.length; i++) {
-            standardEvaluationContext.setVariable(parametersName[i], args[i]);
-        }
-        return standardEvaluationContext;
-    }
-
-    /**
-     * 通过key SEL表达式获取值
-     */
-    private String getElValue(String key, StandardEvaluationContext context) {
-        if (ObjectUtils.isEmpty(key)) {
-            return "";
-        }
-        ExpressionParser parser = new SpelExpressionParser();
-        Expression exp = parser.parseExpression(key);
-        return exp.getValue(context, String.class);
-
-    }
-
 }
