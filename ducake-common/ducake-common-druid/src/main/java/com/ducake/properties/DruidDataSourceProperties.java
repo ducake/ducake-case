@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author 93477
  */
-@ConfigurationProperties(prefix = "spring.datasource.dynamic")
+@ConfigurationProperties(prefix = "ducake.dynamic.datasource")
 public class DruidDataSourceProperties {
     private Map<String, DataSourceProperties> datasource = new LinkedHashMap<>();
 

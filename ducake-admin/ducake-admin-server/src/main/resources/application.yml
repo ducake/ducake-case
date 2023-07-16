@@ -1,0 +1,12 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /cake
+
+spring:
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+  application:
+    name: ducake-admin-server

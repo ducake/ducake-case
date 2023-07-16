@@ -13,7 +13,11 @@
 
 
     <dependencies>
-
+        <dependency>
+            <groupId>com.ducake</groupId>
+            <artifactId>ducake-common-druid</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
