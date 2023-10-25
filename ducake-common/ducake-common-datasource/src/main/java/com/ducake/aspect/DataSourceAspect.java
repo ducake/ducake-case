@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class DataSourceAspect {
-    private ExpressionEvaluator<String> evaluator = new ExpressionEvaluator<>();
+    private final ExpressionEvaluator<String> evaluator = new ExpressionEvaluator<>();
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private static final String DYNAMIC_PREFIX = "#";
     private static final String CONFIG_PREFIX = "$";

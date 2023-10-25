@@ -17,7 +17,6 @@
 
     <modules>
         <module>ducake-common</module>
-        <module>ducake-console</module>
         <module>ducake-admin</module>
     </modules>
 

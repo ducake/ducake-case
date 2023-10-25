@@ -23,12 +23,6 @@ public class ExpressionEvaluator<T> extends CachedExpressionEvaluator {
 
     /**
      * 创建表达式上下文
-     *
-     * @param object
-     * @param targetClass
-     * @param method
-     * @param args
-     * @return
      */
     public EvaluationContext createEvaluationContext(Object object, Class<?> targetClass, Method method, Object[] args) {
         Method targetMethod = getTargetMethod(targetClass, method);
@@ -38,10 +32,6 @@ public class ExpressionEvaluator<T> extends CachedExpressionEvaluator {
 
     /**
      * 获取目标对象的方法
-     *
-     * @param targetClass
-     * @param method
-     * @return
      */
     private Method getTargetMethod(Class<?> targetClass, Method method) {
         AnnotatedElementKey methodKey = new AnnotatedElementKey(method, targetClass);
@@ -50,12 +40,6 @@ public class ExpressionEvaluator<T> extends CachedExpressionEvaluator {
 
     /**
      * 根据条件表达式获SpEL取值
-     *
-     * @param conditionExpression
-     * @param elementKey
-     * @param evalContext
-     * @param clazz
-     * @return
      */
     public T getValueByConditionExpression(String conditionExpression, AnnotatedElementKey elementKey, EvaluationContext evalContext, Class<T> clazz) {
         return getExpression(this.conditionCache, elementKey, conditionExpression).getValue(evalContext, clazz);
@@ -64,7 +48,7 @@ public class ExpressionEvaluator<T> extends CachedExpressionEvaluator {
     @Getter
     @ToString
     @AllArgsConstructor
-    class ExpressionRootObject {
+    static class ExpressionRootObject {
         private final Object object;
         private final Object[] args;
     }
